@@ -13,6 +13,11 @@ class DatabaseConnector:
         engine_str = f"postgresql+psycopg2://{db_creds['RDS_USER']}:{db_creds['RDS_PASSWORD']}@{db_creds['RDS_HOST']}:{db_creds['RDS_PORT']}/{db_creds['RDS_DATABASE']}"
         return create_engine(engine_str)
     
+    def init_local_engine(self):
+        local_creds = self.read_local_creds()
+        engine_2 = f"postgresql+psycopg2://{local_cred['username']}:{local_cred['password']}@{local_cred['host']}:{local_creds['port']}/{local_cred['database']}"
+        return create_engine(engine_2)
+
     def list_db_tables(self):
         engine = self.init_db_engine()
         inspector = inspect(engine) 
