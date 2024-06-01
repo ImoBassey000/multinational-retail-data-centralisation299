@@ -1,5 +1,5 @@
 import yaml
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 
 
 class DatabaseConnector:
@@ -27,6 +27,8 @@ class DatabaseConnector:
         inspector = inspect(engine) 
         return inspector.get_table_names() 
     
+
     def upload_to_db(self, legacy_users_df, legacy_users):
-       engine = self.init_db_engine()
-       legacy_users_df.to_sql(legacy_users, engine, if_exists='replace', index=False)
+        engine = self.init_local_engine()
+        with engine.connect() as connection:
+            legacy_users_df.to_sql(legacy_users, connection, if_exists='replace', index=False)
