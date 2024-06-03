@@ -1,34 +1,35 @@
 import yaml
-from sqlalchemy import create_engine, inspect, text
-
+from sqlalchemy import create_engine, inspect
 
 class DatabaseConnector:
-
     def read_db_creds(self):
         with open("db_creds.yaml", "r") as file:
             return yaml.safe_load(file)
-        
+
     def init_db_engine(self):
         db_creds = self.read_db_creds()
         engine_str = f"postgresql+psycopg2://{db_creds['RDS_USER']}:{db_creds['RDS_PASSWORD']}@{db_creds['RDS_HOST']}:{db_creds['RDS_PORT']}/{db_creds['RDS_DATABASE']}"
         return create_engine(engine_str)
-    
+
     def read_local_creds(self):
-       with open("local_cred.yaml", "r") as file_2:
-            return yaml.safe_load(file_2)
+        with open("local_cred.yaml", "r") as file:
+            return yaml.safe_load(file)
 
     def init_local_engine(self):
         local_creds = self.read_local_creds()
-        engine_2 = f"postgresql+psycopg2://{local_creds['username']}:{local_creds['password']}@{local_creds['host']}:{local_creds['port']}/{local_creds['database']}"
-        return create_engine(engine_2)
+        engine_str = f"postgresql+psycopg2://{local_creds['username']}:{local_creds['password']}@{local_creds['host']}:{local_creds['port']}/{local_creds['database']}"
+        return create_engine(engine_str)
+
+    def read_api_keys(self):
+        with open("api_keys.yaml", "r") as file:
+            return yaml.safe_load(file)
 
     def list_db_tables(self):
         engine = self.init_db_engine()
-        inspector = inspect(engine) 
-        return inspector.get_table_names() 
-    
+        inspector = inspect(engine)
+        return inspector.get_table_names()
 
-    def upload_to_db(self, legacy_users_df, legacy_users):
+    def upload_to_db(self, df, table_name):
         engine = self.init_local_engine()
         with engine.connect() as connection:
-            legacy_users_df.to_sql(legacy_users, connection, if_exists='replace', index=False)
+            df.to_sql(table_name, connection, if_exists='replace', index=False)
