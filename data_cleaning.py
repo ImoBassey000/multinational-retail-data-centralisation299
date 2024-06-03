@@ -1,5 +1,7 @@
 import pandas as pd
 from data_extraction import DataExtractor
+import tabula
+import re
 
 class DataCleaning:
     def __init__(self, db_creds):
@@ -18,3 +20,16 @@ class DataCleaning:
         legacy_users_df['date_of_birth'] = legacy_users_df['date_of_birth'].dt.date
         
         return legacy_users_df
+    
+    def clean_card_data(self, card_dfs):
+        card_dfs = card_dfs.dropna(how='all')
+        card_dfs = card_dfs.drop_duplicates()
+        card_dfs['date_payment_confirmed'] = pd.to_datetime(card_dfs['date_payment_confirmed'], errors='coerce')
+        card_dfs = card_dfs.dropna(subset=['date_payment_confirmed'])
+        card_dfs['date_payment_confirmed'] = card_dfs['date_payment_confirmed'].dt.date
+        expiry_date_pattern = re.compile(r'^(0[1-9]|1[0-2])/([0-9]{2})$')
+        valid_expiry_dates = card_dfs['expiry_date'].apply(lambda x: bool(expiry_date_pattern.match(x)))
+        card_dfs = card_dfs[valid_expiry_dates]
+        return card_dfs
+
+        

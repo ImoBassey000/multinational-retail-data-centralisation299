@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine
-
+import tabula
 
 class DataExtractor:
 
@@ -14,3 +14,8 @@ class DataExtractor:
     def read_rds_table(self, table_name):
         query = f"SELECT * FROM {table_name};"
         return pd.read_sql_query(query, self.engine)
+    
+    def retrieve_pdf_data(self, link):
+        dfs = tabula.read_pdf(link, pages='all')
+        dfs = pd.concat(dfs, ignore_index=True)
+        return dfs
