@@ -59,5 +59,5 @@ class DataCleaning:
         return orders_df.drop(columns=['first_name', 'last_name', '1'])
 
     def clean_date_times_data(self, date_times_df):
-        date_times_df['date_time'] = pd.to_datetime(date_times_df['date_time'], errors='coerce')
-        return date_times_df.dropna(subset=['date_time'])
+        date_times_df.dropna(how='all').drop_duplicates()
+        return date_times_df

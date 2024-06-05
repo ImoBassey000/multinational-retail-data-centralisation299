@@ -47,6 +47,9 @@ orders_df = data_cleaner.extractor.read_rds_table("orders_table")
 cleaned_orders_df = data_cleaner.clean_orders_data(orders_df)
 db_connector.upload_to_db(cleaned_orders_df, "orders_table")
 
-# Extract, clean, and upload JSON data from S3
+# Extract JSON data from S3
+date_times_df = data_cleaner.extractor.extract_json_from_s3()
+
+# Clean and upload JSON data
 cleaned_date_times_df = data_cleaner.clean_date_times_data(date_times_df)
 db_connector.upload_to_db(cleaned_date_times_df, "dim_date_times")
