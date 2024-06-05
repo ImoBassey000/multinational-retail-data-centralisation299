@@ -63,7 +63,7 @@ class DataExtractor:
 
     def extract_json_from_s3(self, s3_address, aws_access_key_id, aws_secret_access_key):
         s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
-        bucket, key = s3_address.replace("https://", "").replace("s3://", "").split("/", 1)
+        bucket, key = s3_address.replace("https://", "").replace("s3://", "").split("/")
         obj = s3.get_object(Bucket=bucket, Key=key)
         json_data = obj['Body'].read()
         data_df = pd.read_json(BytesIO(json_data))
