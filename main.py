@@ -21,7 +21,7 @@ card_df = data_cleaner.extractor.retrieve_pdf_data(link)
 clean_card_data = data_cleaner.clean_card_data(card_df)
 db_connector.upload_to_db(clean_card_data, "dim_card_details")
 
-# Clean store data
+# Clean store data and upload
 api_keys = db_connector.read_api_keys()
 number_of_stores = data_cleaner.extractor.list_number_of_stores(api_keys['number_of_stores_endpoint'], api_keys['headers'])
 store_data_df = data_cleaner.extractor.retrieve_stores_data(api_keys['retrieve_store_endpoint'], api_keys['headers'], number_of_stores)
@@ -42,22 +42,11 @@ db_connector.upload_to_db(clean_products_df, "dim_products")
 tables = db_connector.list_db_tables()
 print("Tables in the database:", tables)
 
-# Extract orders data
+# Extract, clean, and upload orders data
 orders_df = data_cleaner.extractor.read_rds_table("orders_table")
-
-# Clean orders data
 cleaned_orders_df = data_cleaner.clean_orders_data(orders_df)
-
-# Upload cleaned orders data
 db_connector.upload_to_db(cleaned_orders_df, "orders_table")
 
-# Step Extract JSON data from S3
-my_s3_keys = db_connector.s3_credentials()
-s3_url = "https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json"
-date_times_df = data_cleaner.extractor.extract_json_from_s3(s3_url, aws_keys['aws_access_key_id'], aws_keys['aws_secret_access_key'])
-
-# Clean JSON data
+# Extract, clean, and upload JSON data from S3
 cleaned_date_times_df = data_cleaner.clean_date_times_data(date_times_df)
-
-# Upload cleaned JSON data to the database
 db_connector.upload_to_db(cleaned_date_times_df, "dim_date_times")
