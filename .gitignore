@@ -1,3 +1,5 @@
 db_creds.yaml
 local_cred.yaml
-api_keys.yaml
+apis_keys.yaml
+aws_keys.yaml
+s3_keys.yaml

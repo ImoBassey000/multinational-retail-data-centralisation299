@@ -1,10 +1,18 @@
 import yaml
 from sqlalchemy import create_engine, inspect
+import os
 
 class DatabaseConnector:
-    def read_db_creds(self):
-        with open("db_creds.yaml", "r") as file:
+    def __init__(self, config_dir=""):
+        self.config_dir = config_dir
+
+    def _read_yaml_file(self, filename):
+        filepath = os.path.join(self.config_dir, filename)
+        with open(filepath, "r") as file:
             return yaml.safe_load(file)
+
+    def read_db_creds(self):
+        return self._read_yaml_file("db_creds.yaml")
 
     def init_db_engine(self):
         db_creds = self.read_db_creds()
@@ -12,8 +20,7 @@ class DatabaseConnector:
         return create_engine(engine_str)
 
     def read_local_creds(self):
-        with open("local_cred.yaml", "r") as file:
-            return yaml.safe_load(file)
+        return self._read_yaml_file("local_cred.yaml")
 
     def init_local_engine(self):
         local_creds = self.read_local_creds()
@@ -21,8 +28,7 @@ class DatabaseConnector:
         return create_engine(engine_str)
 
     def read_api_keys(self):
-        with open("api_keys.yaml", "r") as file:
-            return yaml.safe_load(file)
+        return self._read_yaml_file("apis_keys.yaml")
 
     def list_db_tables(self):
         engine = self.init_db_engine()
@@ -33,3 +39,9 @@ class DatabaseConnector:
         engine = self.init_local_engine()
         with engine.connect() as connection:
             df.to_sql(table_name, connection, if_exists='replace', index=False)
+
+    def aws_credentials(self):
+        return self._read_yaml_file("aws_keys.yaml")
+
+    def s3_credentials(self):
+        return self._read_yaml_file("s3_keys.yaml")
