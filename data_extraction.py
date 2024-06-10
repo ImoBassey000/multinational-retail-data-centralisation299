@@ -32,7 +32,7 @@ class DataExtractor:
             return pd.DataFrame()
 
     def list_number_of_stores(self, NUMBER_OF_STORES_ENDPOINT):
-        response = requests.get(NUMBER_OF_STORES_ENDPOINT, headers=headers)
+        response = requests.get(NUMBER_OF_STORES_ENDPOINT, headers=HEADERS)
         if response.status_code == 200:
             data = response.json()
             print(data) 
@@ -44,7 +44,7 @@ class DataExtractor:
         stores_data = []
         for store_number in range(1, number_of_stores + 1):
             url = STORE_DETAILS_ENDPOINT.format(store_number=store_number)
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=HEADERS)
             if response.status_code == 200:
                 store_data = response.json()
                 stores_data.append(store_data)

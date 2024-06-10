@@ -23,8 +23,8 @@ db_connector.upload_to_db(clean_card_data, "dim_card_details")
 
 # Clean store data and upload
 api_keys = db_connector.read_api_keys()
-number_of_stores = api_keys.list_number_of_stores(NUMBER_OF_STORES_ENDPOINT)
-stores_df = api_keys.retrieve_stores_data(STORE_DETAILS_ENDPOINT, number_of_stores)
+number_of_stores = api_keys.list_number_of_stores(api_keys['NUMBER_OF_STORES_ENDPOINT'])
+stores_df = api_keys.retrieve_stores_data(api_keys['STORE_DETAILS_ENDPOINT'], number_of_stores)
 clean_stores_df = data_cleaner.clean_store_data(stores_df)
 db_connector.upload_to_db(clean_stores_df, 'dim_store_details')
 
