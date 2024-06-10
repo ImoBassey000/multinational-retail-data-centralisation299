@@ -31,26 +31,27 @@ class DataExtractor:
             print(f"An error occurred while retrieving PDF data: {e}")
             return pd.DataFrame()
 
-    def list_number_of_stores(self, endpoint, headers):
-        try:
-            response = requests.get(endpoint, headers=headers)
+    def list_number_of_stores(self, NUMBER_OF_STORES_ENDPOINT):
+        response = requests.get(NUMBER_OF_STORES_ENDPOINT, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            print(data) 
+            return data['number_of_stores']  
+        else:
             response.raise_for_status()
-            return response.json().get('number_of_stores', 0)
-        except requests.RequestException as e:
-            print(f"An error occurred while fetching the number of stores: {e}")
-            return 0
 
-    def retrieve_stores_data(self, endpoint, headers, number_of_stores):
+    def retrieve_stores_data(self, STORE_DETAILS_ENDPOINT, number_of_stores):
         stores_data = []
         for store_number in range(1, number_of_stores + 1):
-            store_endpoint = endpoint.format(store_number=store_number)
-            try:
-                response = requests.get(store_endpoint, headers=headers)
+            url = STORE_DETAILS_ENDPOINT.format(store_number=store_number)
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                store_data = response.json()
+                stores_data.append(store_data)
+            else:
                 response.raise_for_status()
-                stores_data.append(response.json())
-            except requests.RequestException as e:
-                print(f"An error occurred while fetching data for store {store_number}: {e}")
         return pd.DataFrame(stores_data)
+    
 
     def extract_from_s3(self, s3_address, aws_access_key_id, aws_secret_access_key):
         s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)

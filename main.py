@@ -1,8 +1,8 @@
 from data_cleaning import DataCleaning
 from database_utils import DatabaseConnector
 
-# Define the directory where the config files are located
-config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  # Change this to the correct path
+# Directory where the config files are located
+config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
 
 # Load database credentials
 db_connector = DatabaseConnector(config_dir)
@@ -23,10 +23,10 @@ db_connector.upload_to_db(clean_card_data, "dim_card_details")
 
 # Clean store data and upload
 api_keys = db_connector.read_api_keys()
-number_of_stores = data_cleaner.extractor.list_number_of_stores(api_keys['number_of_stores_endpoint'], api_keys['headers'])
-store_data_df = data_cleaner.extractor.retrieve_stores_data(api_keys['retrieve_store_endpoint'], api_keys['headers'], number_of_stores)
-cleaned_store_data_df = data_cleaner.clean_store_data(store_data_df)
-db_connector.upload_to_db(cleaned_store_data_df, "dim_store_details")
+number_of_stores = api_keys.list_number_of_stores(NUMBER_OF_STORES_ENDPOINT)
+stores_df = api_keys.retrieve_stores_data(STORE_DETAILS_ENDPOINT, number_of_stores)
+clean_stores_df = data_cleaner.clean_store_data(stores_df)
+db_connector.upload_to_db(clean_stores_df, 'dim_store_details')
 
 # Extract, clean, and upload product data
 aws_keys = db_connector.aws_credentials()

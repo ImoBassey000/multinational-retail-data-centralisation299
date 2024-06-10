@@ -28,8 +28,11 @@ class DataCleaning:
 
         return card_df
 
-    def clean_store_data(self, store_df):
-        return store_df.dropna(how='all').drop_duplicates()
+    def clean_store_data(self, stores_df):
+        stores_df['store_number'] = stores_df['store_number'].astype(int)
+        stores_df['store_name'] = stores_df['store_name'].str.strip()
+        stores_df.dropna(subset=['store_number', 'store_name'], inplace=True)
+        return stores_df
 
     def convert_product_weights(self, products_df):
         def convert_weight(value):
