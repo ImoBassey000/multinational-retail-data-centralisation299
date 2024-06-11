@@ -4,9 +4,9 @@ from data_extraction import DataExtractor
 
 
 class DataCleaning:
-    def __init__(self, db_creds):
-        self.extractor = DataExtractor(db_creds)
-        self.read = self.extractor.read_rds_table('legacy_users')
+    # def __init__(self, db_creds):
+    #     self.extractor = DataExtractor(db_creds)
+    #     self.read = self.extractor.read_rds_table('legacy_users')
 
     def clean_user_data(self):
         legacy_users_df = self.read.copy()

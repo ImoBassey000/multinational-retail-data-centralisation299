@@ -7,19 +7,10 @@ from io import BytesIO, StringIO
 
 
 class DataExtractor:
-    def __init__(self, db_creds):
-        self.engine = self._init_db_engine(db_creds)
 
-    def _init_db_engine(self, db_creds):
-        engine_str = (
-            f"postgresql+psycopg2://{db_creds['RDS_USER']}:{db_creds['RDS_PASSWORD']}@"
-            f"{db_creds['RDS_HOST']}:{db_creds['RDS_PORT']}/{db_creds['RDS_DATABASE']}"
-        )
-        return create_engine(engine_str)
-
-    def read_rds_table(self, table_name):
+    def read_rds_table(self, table_name, engine):
         query = f"SELECT * FROM {table_name};"
-        return pd.read_sql_query(query, self.engine)
+        return pd.read_sql_query(query, engine)
 
     def retrieve_pdf_data(self, link):
         try:
@@ -31,26 +22,25 @@ class DataExtractor:
             print(f"An error occurred while retrieving PDF data: {e}")
             return pd.DataFrame()
 
-    def list_number_of_stores(self, NUMBER_OF_STORES_ENDPOINT):
-        response = requests.get(NUMBER_OF_STORES_ENDPOINT, headers=HEADERS)
+    def list_number_of_stores(self, NUMBER_OF_STORES_ENDPOINT, headers):
+        response = requests.get(NUMBER_OF_STORES_ENDPOINT, headers=headers)
         if response.status_code == 200:
             data = response.json()
-            print(data) 
-            return data['number_of_stores']  
+            return data['number_stores']
         else:
             response.raise_for_status()
 
-    def retrieve_stores_data(self, STORE_DETAILS_ENDPOINT, number_of_stores):
+    def retrieve_stores_data(self, STORE_DETAILS_ENDPOINT, headers, number_of_stores):
         stores_data = []
         for store_number in range(1, number_of_stores + 1):
             url = STORE_DETAILS_ENDPOINT.format(store_number=store_number)
-            response = requests.get(url, headers=HEADERS)
+            response = requests.get(url, headers=headers)
             if response.status_code == 200:
                 store_data = response.json()
                 stores_data.append(store_data)
             else:
                 response.raise_for_status()
-        return pd.DataFrame(stores_data)
+        pd.DataFrame(stores_data)
     
 
     def extract_from_s3(self, s3_address, aws_access_key_id, aws_secret_access_key):

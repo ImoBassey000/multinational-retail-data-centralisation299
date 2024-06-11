@@ -1,6 +1,7 @@
 import yaml
 from sqlalchemy import create_engine, inspect
 import os
+import json
 
 
 class DatabaseConnector:
@@ -11,6 +12,11 @@ class DatabaseConnector:
         filepath = os.path.join(self.config_dir, filename)
         with open(filepath, "r") as file:
             return yaml.safe_load(file)
+        
+    def _read_json_file(self, filename):
+        filepath = os.path.join(self.config_dir, filename)
+        with open(filepath, "r") as file:
+            return json.load(file)
 
     def read_db_creds(self):
         return self._read_yaml_file("db_creds.yaml")
@@ -36,9 +42,8 @@ class DatabaseConnector:
 
     def read_api_keys(self):
         return self._read_yaml_file("apis_keys.yaml")
-
-    def list_db_tables(self):
-        engine = self.init_db_engine()
+    
+    def list_db_tables(self, engine):
         inspector = inspect(engine)
         return inspector.get_table_names()
 
