@@ -30,16 +30,18 @@ class DataExtractor:
         else:
             response.raise_for_status()
 
-    def retrieve_stores_data(self, STORE_DETAILS_ENDPOINT, headers, number_of_stores):
+    def retrieve_stores_data(self, STORE_DETAILS_ENDPOINT, headers, list_number_of_stores):
         stores_data = []
-        for store_number in range(1, number_of_stores + 1):
+        self.list_number_of_stores = list_number_of_stores
+        for store_number in range(list_number_of_stores):
             url = STORE_DETAILS_ENDPOINT.format(store_number=store_number)
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
                 store_data = response.json()
                 stores_data.append(store_data)
+                return stores_data
             else:
-                response.raise_for_status()
+                    response.raise_for_status()
         pd.DataFrame(stores_data)
     
 
@@ -53,3 +55,4 @@ class DataExtractor:
     def extract_json_from_s3(self):
         date_times_df = pd.read_json('https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json')
         return date_times_df
+    

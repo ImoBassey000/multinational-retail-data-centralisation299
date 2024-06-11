@@ -7,7 +7,7 @@ config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-cent
 
 # Instaciate the class 
 db_connector = DatabaseConnector(config_dir)
-db_extract = DataExtractor()
+data_extract = DataExtractor()
 # data_cleaner = DataCleaning(db_creds)
 
 # instaciate the connection and list the tables from rds
@@ -17,7 +17,7 @@ print(db_read_table)
 
 
 # reading legacy_users table from rds
-legacy_userss = db_extract.read_rds_table('legacy_users', my_engine)
+legacy_userss = data_extract.read_rds_table('legacy_users', my_engine)
 print(legacy_userss)
 
 
@@ -39,12 +39,12 @@ print(api_keys['headers'])
 
 endpoint = api_keys['NUMBER_OF_STORES_ENDPOINT']
 headers = api_keys['headers']
-number_of_stores = db_extract.list_number_of_stores(endpoint, headers)
+number_of_stores = data_extract.list_number_of_stores(endpoint, headers)
 print(number_of_stores)
 
 # Retrieve stores data
 endpoint_2 = api_keys['STORE_DETAILS_ENDPOINT']
-stores_df = db_extract.retrieve_stores_data(endpoint_2, headers, number_of_stores)
+stores_df = data_extract.retrieve_stores_data(endpoint_2, headers, number_of_stores)
 print(stores_df)
 # clean_stores_df = data_cleaner.clean_store_data(stores_df)
 # db_connector.upload_to_db(clean_stores_df, 'dim_store_details')
