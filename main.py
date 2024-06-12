@@ -32,16 +32,19 @@ def upload_card_data():
     clean_card_data = data_cleaner.clean_card_data(card_df)
     db_connector.upload_to_db(clean_card_data, "dim_card_details")
 
-# def upload_store_data():
-#     config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
-#     db_connector = DatabaseConnector(config_dir)
-#     data_extract = DataExtractor()
-#     data_cleaner = DataCleaning()
-#     api_keys = db_connector.read_api_keys()
-#     number_of_stores = data_extract.list_number_of_stores(api_keys['NUMBER_OF_STORES_ENDPOINT'], api_keys['headers'])
-#     stores_df = data_extract.retrieve_stores_data(api_keys['STORE_DETAILS_ENDPOINT'], api_keys['headers'], number_of_stores)
-#     clean_stores_df = data_cleaner.clean_store_data(stores_df)
-#     db_connector.upload_to_db(clean_stores_df, 'dim_store_details')
+def upload_store_data():
+    config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+    db_connector = DatabaseConnector(config_dir)
+    data_extract = DataExtractor()
+    data_cleaner = DataCleaning()
+    api_keys = db_connector.read_api_keys()
+    number_of_stores = data_extract.list_number_of_stores(api_keys['NUMBER_OF_STORES_ENDPOINT'], api_keys['headers'])
+    print(f" The number of stores are: ", number_of_stores)
+    stores_df = data_extract.retrieve_stores_data(api_keys['STORE_DETAILS_ENDPOINT'], api_keys['headers'], number_of_stores)
+    print(stores_df)
+    clean_stores_df = data_cleaner.clean_store_data(stores_df)
+    print(clean_stores_df)
+    db_connector.upload_to_db(clean_stores_df, 'dim_store_details')
 
 # def upload_product_data():
 #     aws_keys = db_connector.aws_credentials()
@@ -68,7 +71,7 @@ def upload_card_data():
 if __name__ == "__main__":
     upload_dim_users()
     upload_card_data()
-    # upload_store_data()
+    upload_store_data()
     # upload_product_data()
     # upload_orders_data()
     # upload_date_times_data()

@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import numpy as np
 from data_extraction import DataExtractor
 
 
@@ -12,6 +13,7 @@ class DataCleaning:
         return legacy_users_df
 
     def clean_card_data(self, card_df):
+# drop any NANs and duplicates
         card_df = card_df.dropna(how='all').drop_duplicates()
         card_df['date_payment_confirmed'] = pd.to_datetime(card_df['date_payment_confirmed'], errors='coerce').dt.date
         card_df = card_df.dropna(subset=['date_payment_confirmed'])
@@ -20,10 +22,24 @@ class DataCleaning:
         return card_df
 
     def clean_store_data(self, stores_df):
-        stores_df['store_number'] = stores_df['store_number'].astype(int)
-        stores_df['store_name'] = stores_df['store_name'].str.strip()
-        stores_df.dropna(subset=['store_number', 'store_name'], inplace=True)
+#  Correct the 'continent' column
+        stores_df['continent'] = stores_df['continent'].replace({'eeEurope': 'Europe'})
+        valid_continents = ['Europe', 'America']
+        stores_df['continent'] = stores_df['continent'].apply(lambda x: x if x in valid_continents else np.nan)
+# Removing rows with non-numeric longitude and latitude
+        stores_df['longitude'] = pd.to_numeric(stores_df['longitude'], errors='coerce')
+        stores_df['latitude'] = pd.to_numeric(stores_df['latitude'], errors='coerce')
+#  Handle missing values (fill None with np.nan)
+        stores_df = stores_df.replace('N/A', np.nan).replace('', np.nan)
+        stores_df = stores_df.applymap(lambda x: np.nan if x in ['K0ODETRLS3', 'K8CXLZDP07', 'UXMWDMX1LC', '3VHFDNP8ET', '9D4LK7X4LZ', 'D23PCWSM6S', '36IIMAQD58', 'NN04B3F6UQ', 'JZP8MIJTPZ', 'B3EH2ZGQAV', '1WZB1TE1HL'] else x)
+#  Ensure correct data types
+        stores_df['staff_numbers'] = pd.to_numeric(stores_df['staff_numbers'], errors='coerce')
+        stores_df['opening_date'] = pd.to_datetime(stores_df['opening_date'], errors='coerce')
+#  Drop rows with all NaNs in critical columns
+        stores_df = stores_df.dropna(subset=['address', 'longitude', 'latitude', 'locality', 'store_code', 'staff_numbers', 'opening_date', 'store_type', 'country_code', 'continent'])
         return stores_df
+    
+
 
     def convert_product_weights(self, products_df):
         def convert_weight(value):
