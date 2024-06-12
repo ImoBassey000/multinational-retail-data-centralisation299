@@ -10,7 +10,6 @@ def upload_dim_users():
     db_connector = DatabaseConnector(config_dir)
     data_extract = DataExtractor()
     data_cleaner = DataCleaning()
-
     db_creds = db_connector.read_db_creds() 
     engine = db_connector.init_db_engine()
 # list the tables available    
@@ -18,11 +17,11 @@ def upload_dim_users():
     print(f"The available tables are", list_tables)
 # Reading the data from the legacy_users table
     legacy_users = data_extract.read_rds_table('legacy_users', engine)
-    print(legacy_users)
 # Uploading the clean data to dim_users table in sales_data db    
     legacy_users_cleaned = data_cleaner.clean_user_data(legacy_users)
     db_connector.upload_to_db(legacy_users_cleaned, "dim_users")
 
+# Uploading card data to dim_card_details table in sales_data db
 def upload_card_data():
     config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
     db_connector = DatabaseConnector(config_dir)
@@ -30,12 +29,14 @@ def upload_card_data():
     data_cleaner = DataCleaning()
     link = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
     card_df = data_extract.retrieve_pdf_data(link)
-    print(card_df)
     clean_card_data = data_cleaner.clean_card_data(card_df)
-    print(clean_card_data)
     db_connector.upload_to_db(clean_card_data, "dim_card_details")
 
 # def upload_store_data():
+#     config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+#     db_connector = DatabaseConnector(config_dir)
+#     data_extract = DataExtractor()
+#     data_cleaner = DataCleaning()
 #     api_keys = db_connector.read_api_keys()
 #     number_of_stores = data_extract.list_number_of_stores(api_keys['NUMBER_OF_STORES_ENDPOINT'], api_keys['headers'])
 #     stores_df = data_extract.retrieve_stores_data(api_keys['STORE_DETAILS_ENDPOINT'], api_keys['headers'], number_of_stores)

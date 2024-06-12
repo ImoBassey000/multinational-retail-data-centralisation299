@@ -15,10 +15,8 @@ class DataCleaning:
         card_df = card_df.dropna(how='all').drop_duplicates()
         card_df['date_payment_confirmed'] = pd.to_datetime(card_df['date_payment_confirmed'], errors='coerce').dt.date
         card_df = card_df.dropna(subset=['date_payment_confirmed'])
-
         expiry_date_pattern = re.compile(r'^(0[1-9]|1[0-2])/([0-9]{2})$')
         card_df = card_df[card_df['expiry_date'].apply(lambda x: bool(expiry_date_pattern.match(x)))]
-
         return card_df
 
     def clean_store_data(self, stores_df):
