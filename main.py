@@ -41,21 +41,30 @@ def upload_store_data():
     number_of_stores = data_extract.list_number_of_stores(api_keys['NUMBER_OF_STORES_ENDPOINT'], api_keys['headers'])
     print(f" The number of stores are: ", number_of_stores)
     stores_df = data_extract.retrieve_stores_data(api_keys['STORE_DETAILS_ENDPOINT'], api_keys['headers'], number_of_stores)
-    print(stores_df)
     clean_stores_df = data_cleaner.clean_store_data(stores_df)
-    print(clean_stores_df)
     db_connector.upload_to_db(clean_stores_df, 'dim_store_details')
 
-# def upload_product_data():
-#     aws_keys = db_connector.aws_credentials()
-#     s3_address = 's3://data-handling-public/products.csv'
-#     products_df = data_extract.extract_from_s3(s3_address, aws_keys['aws_access_key_id'], aws_keys['aws_secret_access_key'])
-#     products_df = data_cleaner.convert_product_weights(products_df)
-#     clean_products_df = data_cleaner.clean_products_data(products_df)
-#     db_connector.upload_to_db(clean_products_df, "dim_products")
+def upload_product_data():
+    config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+    db_connector = DatabaseConnector(config_dir)
+    data_extract = DataExtractor()
+    data_cleaner = DataCleaning()
+    aws_keys = db_connector.aws_credentials()
+    s3_address = 's3://data-handling-public/products.csv'
+    products_df = data_extract.extract_from_s3(s3_address, aws_keys['aws_access_key_id'], aws_keys['aws_secret_access_key'])
+    products_df = data_cleaner.convert_product_weights(products_df)
+    clean_products_df = data_cleaner.clean_products_data(products_df)
+
+    db_connector.upload_to_db(clean_products_df, "dim_products")
 
 # def upload_orders_data():
+#     config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+#     db_connector = DatabaseConnector(config_dir)
+#     data_extract = DataExtractor()
+#     data_cleaner = DataCleaning()
+#     engine = db_connector.init_db_engine()
 #     orders_df = data_extract.read_rds_table("orders_table", engine)
+#     print(orders_df)
 #     cleaned_orders_df = data_cleaner.clean_orders_data(orders_df)
 #     db_connector.upload_to_db(cleaned_orders_df, "orders_table")
 
@@ -72,6 +81,6 @@ if __name__ == "__main__":
     upload_dim_users()
     upload_card_data()
     upload_store_data()
-    # upload_product_data()
+    upload_product_data()
     # upload_orders_data()
     # upload_date_times_data()

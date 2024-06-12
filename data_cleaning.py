@@ -64,7 +64,20 @@ class DataCleaning:
         return products_df
 
     def clean_products_data(self, products_df):
-        return products_df.dropna(how='all').drop_duplicates()
+# Drop the Unnamed: 0 column
+        products_df.drop(columns=['Unnamed: 0'], inplace=True)
+# Remove whitespace from column names and values
+        products_df.columns = products_df.columns.str.strip().str.lower()
+# Standardize 'removed' column values
+        products_df['removed'] = products_df['removed'].str.strip().str.replace('Still_avaliable', 'Still_available')
+# Remove non-numeric values from product_price
+        products_df['product_price'] = products_df['product_price'].replace('[£]', '', regex=True)
+        products_df = products_df[pd.to_numeric(products_df['product_price'], errors='coerce').notna()]
+        products_df['product_price'] = products_df['product_price'].astype(float)
+# Convert date_added to datetime
+        products_df['date_added'] = pd.to_datetime(products_df['date_added'], errors='coerce').dt.date
+        products_df = products_df.dropna(subset=['date_added'])
+        return products_df
 
     def clean_orders_data(self, orders_df):
         return orders_df.drop(columns=['first_name', 'last_name', '1'])
