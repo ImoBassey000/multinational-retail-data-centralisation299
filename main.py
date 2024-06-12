@@ -2,14 +2,15 @@ from data_cleaning import DataCleaning
 from database_utils import DatabaseConnector
 from data_extraction import DataExtractor
 
-# Directory where the config files are located and Instantiate the classes
-config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
-db_connector = DatabaseConnector(config_dir)
-data_extract = DataExtractor()
-data_cleaner = DataCleaning()
 
 #  Uploading dim_users table to sales_data db
 def upload_dim_users():
+    # Directory where the config files are located and Instantiate the classes
+    config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+    db_connector = DatabaseConnector(config_dir)
+    data_extract = DataExtractor()
+    data_cleaner = DataCleaning()
+
     db_creds = db_connector.read_db_creds() 
     engine = db_connector.init_db_engine()
 # list the tables available    
@@ -23,10 +24,15 @@ def upload_dim_users():
     db_connector.upload_to_db(legacy_users_cleaned, "dim_users")
 
 def upload_card_data():
+    config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+    db_connector = DatabaseConnector(config_dir)
+    data_extract = DataExtractor()
+    data_cleaner = DataCleaning()
     link = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
-    card_df = data_cleaner.data_extract.retrieve_pdf_data(link)
+    card_df = data_extract.retrieve_pdf_data(link)
     print(card_df)
     clean_card_data = data_cleaner.clean_card_data(card_df)
+    print(clean_card_data)
     db_connector.upload_to_db(clean_card_data, "dim_card_details")
 
 # def upload_store_data():
