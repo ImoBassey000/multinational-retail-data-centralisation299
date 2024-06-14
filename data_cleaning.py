@@ -26,19 +26,21 @@ class DataCleaning:
         stores_df['continent'] = stores_df['continent'].replace({'eeEurope': 'Europe'})
         valid_continents = ['Europe', 'America']
         stores_df['continent'] = stores_df['continent'].apply(lambda x: x if x in valid_continents else np.nan)
+
 # Removing rows with non-numeric longitude and latitude
         stores_df['longitude'] = pd.to_numeric(stores_df['longitude'], errors='coerce')
         stores_df['latitude'] = pd.to_numeric(stores_df['latitude'], errors='coerce')
+
 #  Handle missing values (fill None with np.nan)
         stores_df = stores_df.replace('N/A', np.nan).replace('', np.nan)
         stores_df = stores_df.applymap(lambda x: np.nan if x in ['K0ODETRLS3', 'K8CXLZDP07', 'UXMWDMX1LC', '3VHFDNP8ET', '9D4LK7X4LZ', 'D23PCWSM6S', '36IIMAQD58', 'NN04B3F6UQ', 'JZP8MIJTPZ', 'B3EH2ZGQAV', '1WZB1TE1HL'] else x)
+
 #  Ensure correct data types
         stores_df['staff_numbers'] = pd.to_numeric(stores_df['staff_numbers'], errors='coerce')
         stores_df['opening_date'] = pd.to_datetime(stores_df['opening_date'], errors='coerce')
+
 # Replace newline character in the 'address' column with an underscore
         stores_df['address'] = stores_df['address'].str.replace("\n", "_")
-#  Drop rows with all NaNs in critical columns
-        stores_df = stores_df.dropna(subset=['address', 'longitude', 'latitude', 'locality', 'store_code', 'staff_numbers', 'opening_date', 'country_code', 'continent'])
         return stores_df
     
 
