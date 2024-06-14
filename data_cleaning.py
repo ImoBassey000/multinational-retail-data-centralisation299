@@ -83,5 +83,21 @@ class DataCleaning:
         return orders_df.drop(columns=['first_name', 'last_name', '1'])
 
     def clean_date_times_data(self, date_times_df):
-        date_times_df.dropna(how='all').drop_duplicates()
+# Drop any duplicate data
+        date_times_df = date_times_df.drop_duplicates()
+# Convert month, day and year to numeric and remove any NaN
+        date_times_df['month'] = pd.to_numeric(date_times_df['month'], errors='coerce')
+        date_times_df['day'] = pd.to_numeric(date_times_df['day'], errors='coerce')
+        date_times_df['year'] = pd.to_numeric(date_times_df['year'], errors='coerce')
+        date_times_df = date_times_df.dropna(subset=['month', 'day', 'year'])
+# Check month, day and year are all integars
+        date_times_df['month'] = date_times_df['month'].astype(int)
+        date_times_df['day'] = date_times_df['day'].astype(int)
+        date_times_df['year'] = date_times_df['year'].astype(int)
+# Format the timestamp to show hours, minutes and seconds
+        date_times_df['timestamp'] = pd.to_datetime(date_times_df['timestamp'], format='%H:%M:%S').dt.time
+# Validate data ranges to ensure Month is between 1 and 12
+        assert date_times_df['month'].between(1, 12).all(), "Month values are out of range."
+# Day should be between 1 and 31 (considering different month lengths)
+        assert date_times_df['day'].between(1, 31).all(), "Day values are out of range."
         return date_times_df

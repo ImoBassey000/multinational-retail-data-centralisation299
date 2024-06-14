@@ -54,24 +54,26 @@ def upload_product_data():
     products_df = data_extract.extract_from_s3(s3_address, aws_keys['aws_access_key_id'], aws_keys['aws_secret_access_key'])
     products_df = data_cleaner.convert_product_weights(products_df)
     clean_products_df = data_cleaner.clean_products_data(products_df)
-
     db_connector.upload_to_db(clean_products_df, "dim_products")
 
-# def upload_orders_data():
-#     config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
-#     db_connector = DatabaseConnector(config_dir)
-#     data_extract = DataExtractor()
-#     data_cleaner = DataCleaning()
-#     engine = db_connector.init_db_engine()
-#     orders_df = data_extract.read_rds_table("orders_table", engine)
-#     print(orders_df)
-#     cleaned_orders_df = data_cleaner.clean_orders_data(orders_df)
-#     db_connector.upload_to_db(cleaned_orders_df, "orders_table")
+def upload_orders_data():
+    config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+    db_connector = DatabaseConnector(config_dir)
+    data_extract = DataExtractor()
+    data_cleaner = DataCleaning()
+    engine = db_connector.init_db_engine()
+    orders_df = data_extract.read_rds_table("orders_table", engine)
+    cleaned_orders_df = data_cleaner.clean_orders_data(orders_df)
+    db_connector.upload_to_db(cleaned_orders_df, "orders_table")
 
-# def upload_date_times_data():
-#     date_times_df = data_extract.extract_json_from_s3()
-#     cleaned_date_times_df = data_cleaner.clean_date_times_data(date_times_df)
-#     db_connector.upload_to_db(cleaned_date_times_df, "dim_date_times")
+def upload_date_times_data():
+    config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+    db_connector = DatabaseConnector(config_dir)
+    data_extract = DataExtractor()
+    data_cleaner = DataCleaning()
+    date_times_df = data_extract.extract_json_from_s3()
+    cleaned_date_times_df = data_cleaner.clean_date_times_data(date_times_df)
+    db_connector.upload_to_db(cleaned_date_times_df, "dim_date_times")
 
 # # List all tables in the database
 # tables = db_connector.list_db_tables(engine)
@@ -82,5 +84,5 @@ if __name__ == "__main__":
     upload_card_data()
     upload_store_data()
     upload_product_data()
-    # upload_orders_data()
-    # upload_date_times_data()
+    upload_orders_data()
+    upload_date_times_data()
