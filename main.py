@@ -75,9 +75,14 @@ def upload_date_times_data():
     cleaned_date_times_df = data_cleaner.clean_date_times_data(date_times_df)
     db_connector.upload_to_db(cleaned_date_times_df, "dim_date_times")
 
-# # List all tables in the database
-# tables = db_connector.list_db_tables(engine)
-# print("Tables in the database:", tables)
+#  List all tables in the database
+config_dir = "/Users/imobassey/Desktop/DevOps/Git/multinational-retail-data-centralisation299/"  
+db_connector = DatabaseConnector(config_dir)
+data_extract = DataExtractor()
+data_cleaner = DataCleaning()
+engine = db_connector.init_db_engine()
+tables = db_connector.list_db_tables(engine)
+print("Tables in the database:", tables)
 
 if __name__ == "__main__":
     upload_dim_users()
