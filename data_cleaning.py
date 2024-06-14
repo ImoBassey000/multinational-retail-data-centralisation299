@@ -38,7 +38,7 @@ class DataCleaning:
 # Replace newline character in the 'address' column with an underscore
         stores_df['address'] = stores_df['address'].str.replace("\n", "_")
 #  Drop rows with all NaNs in critical columns
-        stores_df = stores_df.dropna(subset=['address', 'longitude', 'latitude', 'locality', 'store_code', 'staff_numbers', 'opening_date', 'store_type', 'country_code', 'continent'])
+        stores_df = stores_df.dropna(subset=['address', 'longitude', 'latitude', 'locality', 'store_code', 'staff_numbers', 'opening_date', 'country_code', 'continent'])
         return stores_df
     
 
